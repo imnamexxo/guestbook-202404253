@@ -12,8 +12,9 @@ if (!url) {
 const sql = neon(url);
 const schema = await readFile(new URL("../db/schema.sql", import.meta.url), "utf8");
 const statements = schema
+  .replace(/--.*$/gm, "")
   .split(";")
-  .map((s) => s.replace(/--.*$/gm, "").trim())
+  .map((s) => s.trim())
   .filter(Boolean);
 
 const [{ existed }] = await sql.query("SELECT to_regclass('public.entries') IS NOT NULL AS existed");
