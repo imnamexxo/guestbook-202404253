@@ -29,3 +29,16 @@ export async function listEntries(): Promise<PublicEntry[]> {
     createdAt: new Date(row.created_at),
   }));
 }
+
+/** 새 글을 저장한다. 비밀번호는 해시와 salt로만 받는다. */
+export async function insertEntry(entry: {
+  name: string;
+  message: string;
+  passwordHash: string;
+  passwordSalt: string;
+}): Promise<void> {
+  await db()`
+    INSERT INTO entries (name, message, password_hash, password_salt)
+    VALUES (${entry.name}, ${entry.message}, ${entry.passwordHash}, ${entry.passwordSalt})
+  `;
+}

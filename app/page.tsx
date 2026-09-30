@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { listEntries } from "@/lib/entries";
 import { formatCreatedAt } from "@/lib/entry-rules";
+import { EntryForm } from "./entry-form";
 
 const DEVELOPER = { name: "유소영", studentId: "202404253" };
 
@@ -18,6 +19,10 @@ export default async function Home() {
           <span className="font-medium">{DEVELOPER.studentId}</span>
         </p>
       </header>
+
+      <section className="mb-10">
+        <EntryForm />
+      </section>
 
       <section aria-labelledby="entry-list-heading">
         <h2 id="entry-list-heading" className="mb-4 text-lg font-semibold">
