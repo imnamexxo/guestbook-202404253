@@ -42,3 +42,30 @@ export async function insertEntry(entry: {
     VALUES (${entry.name}, ${entry.message}, ${entry.passwordHash}, ${entry.passwordSalt})
   `;
 }
+
+/** 비밀번호 확인용으로 글의 해시와 salt를 읽는다. 결과는 서버 밖으로 내보내지 않는다. */
+export async function getEntryCredentials(
+  id: string,
+): Promise<{ passwordHash: string; passwordSalt: string } | null> {
+  const rows = await db()`
+    SELECT password_hash, password_salt FROM entries WHERE id = ${id}
+  `;
+  if (rows.length === 0) return null;
+  return { passwordHash: rows[0].password_hash, passwordSalt: rows[0].password_salt };
+}
+
+/** 메시지만 바꾼다. 작성자 이름과 작성 시각은 건드리지 않는다. 바뀐 글이 없으면 false. */
+export async function updateMessage(id: string, message: string): Promise<boolean> {
+  const rows = await db()`
+    UPDATE entries SET message = ${message} WHERE id = ${id} RETURNING id
+  `;
+  return rows.length > 0;
+}
+
+/** 글을 삭제한다. 지운 글이 없으면(이미 삭제됨) false. */
+export async function deleteEntry(id: string): Promise<boolean> {
+  const rows = await db()`
+    DELETE FROM entries WHERE id = ${id} RETURNING id
+  `;
+  return rows.length > 0;
+}

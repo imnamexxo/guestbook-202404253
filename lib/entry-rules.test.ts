@@ -7,6 +7,7 @@ import {
   validatePassword,
   hashPassword,
   verifyPassword,
+  parseEntryId,
 } from "./entry-rules.ts";
 
 test("작성 시각은 Asia/Seoul 기준 YYYY-MM-DD HH:mm으로 표시한다", () => {
@@ -83,4 +84,12 @@ test("올바른 비밀번호는 true, 틀린 비밀번호는 false", async () =>
 test("손상된 해시 값에는 예외 없이 false", async () => {
   const { salt } = await hashPassword("1234");
   assert.equal(await verifyPassword("1234", "abcd", salt), false);
+});
+
+// ---- 글 id ----
+test("글 id는 양의 정수 문자열만 받는다", () => {
+  assert.equal(parseEntryId("42"), "42");
+  for (const bad of ["", "0", "-1", "1.5", "abc", "1 OR 1=1", "99999999999999999999", null, 3]) {
+    assert.equal(parseEntryId(bad), null, `id ${JSON.stringify(bad)}`);
+  }
 });

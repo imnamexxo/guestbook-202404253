@@ -117,3 +117,13 @@ export async function verifyPassword(password: string, hash: string, salt: strin
   const actual = await scryptAsync(password, salt);
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
+
+// ---- 글 id ----
+
+const MAX_ENTRY_ID = BigInt("9223372036854775807"); // BIGSERIAL 상한
+
+/** 폼으로 받은 글 id가 양의 정수(BIGINT 범위)면 문자열로, 아니면 null을 돌려준다. */
+export function parseEntryId(raw: unknown): string | null {
+  if (typeof raw !== "string" || !/^[1-9][0-9]{0,18}$/.test(raw)) return null;
+  return BigInt(raw) <= MAX_ENTRY_ID ? raw : null;
+}

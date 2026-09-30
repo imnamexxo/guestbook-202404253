@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { listEntries } from "@/lib/entries";
 import { formatCreatedAt } from "@/lib/entry-rules";
 import { EntryForm } from "./entry-form";
+import { EntryItem } from "./entry-item";
 
 const DEVELOPER = { name: "유소영", studentId: "202404253" };
 
@@ -35,21 +36,16 @@ export default async function Home() {
         ) : (
           <ul className="space-y-4">
             {entries.map((entry) => (
-              <li
+              <EntryItem
                 key={entry.id}
-                className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
-              >
-                <div className="flex items-baseline justify-between gap-4">
-                  <span className="font-semibold">{entry.name}</span>
-                  <time
-                    dateTime={entry.createdAt.toISOString()}
-                    className="shrink-0 text-sm text-zinc-500"
-                  >
-                    {formatCreatedAt(entry.createdAt)}
-                  </time>
-                </div>
-                <p className="mt-2 whitespace-pre-wrap break-words">{entry.message}</p>
-              </li>
+                entry={{
+                  id: entry.id,
+                  name: entry.name,
+                  message: entry.message,
+                  createdAtIso: entry.createdAt.toISOString(),
+                  createdAtText: formatCreatedAt(entry.createdAt),
+                }}
+              />
             ))}
           </ul>
         )}
